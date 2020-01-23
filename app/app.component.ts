@@ -6,13 +6,15 @@ import { error } from "tns-core-modules/trace/trace";
 @Component({
   selector: "my-app",
   template: `
-    <ActionBar title="My App" class="action-bar"></ActionBar>
+    <ActionBar title="Fun Input Voice App (FIVA)" class="action-bar"></ActionBar>
     <!-- Your UI components go here -->
-    <StackLayout>
-      <Button (tap)="triggerListening()" text="Tap me!" >Start listening</Button>
-      <Button (tap)="stopListening()" text="Stop me!" >Stop listening</Button>
-      <Label [text]="text" textWrap="true"></Label>
-    </StackLayout>
+    <GridLayout orientation="horizontal" columns="auto, auto, auto"  horizontalAlignment="center" verticalAlignment="center">
+      <StackLayout>
+        <Button col="1" (tap)="triggerListening()" text="Listen to me!" style="border-radius: 50%;" ></Button>
+        <Label text="prev.: {{text}}" textWrap="true"></Label>
+      </StackLayout>
+    </GridLayout>
+    
   `
 })
 export class AppComponent {
@@ -24,8 +26,13 @@ export class AppComponent {
     this.options = {
       locale: "en-US",
       onResult: (transcription: SpeechRecognitionTranscription) => {
-        if(transcription.finished)
+        if(transcription.finished) {
+          alert({
+            title: "Did you say...?",
+            message: transcription.text
+          });
           this.text = transcription.text;
+        }
         console.log(`transcription: ${transcription.text}`)
         console.log(`finished: ${transcription.finished}`)
       }
@@ -48,12 +55,5 @@ export class AppComponent {
     })
   }
 
-  stopListening() {
-    this.speech.stopListening().then( () => {
-      console.log("Stopped listening to the user")
-    }, error => {
-      console.error(error)
-    })
-  }
 
 }
